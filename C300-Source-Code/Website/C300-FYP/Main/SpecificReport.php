@@ -61,14 +61,37 @@ $("select").on("change" , function() {
     
 	});
 });
+	
+function returnURL(currURL) {
+	if (currURL.includes('ppe')) {
+		return "http://localhost/C300-FYP/Main/PPEPage.php";
+	}
+	else if(currURL.includes('mhe')) {
+		return "http://localhost/C300-FYP/Main/MHEPage.php";
+	}
+	else if(currURL.includes('boxes')) {
+		return "http://localhost/C300-FYP/Main/BoxesPage.php";
+	}
+
+}
+
 
 function GoBackWithRefresh(event) {
     if ('referrer' in document) {
-        window.location = document.referrer;
+        const referrerURL = document.referrer;
+        if (referrerURL.includes('UpdateReportFunc.php')) {
+            newURL = returnURL(window.location.href.toLowerCase())
+            window.location = newURL;
+            // Handle the case when the referring page is 'UpdateReportFunc.php'
+        } else {
+            // Handle the case when the referring page is not 'UpdateReportFunc.php'
+             window.location = referrerURL;
+        }
     } else {
         window.history.back();
     }
-}
+ }
+
 </script>
 <body class="mainPageContainer">
 
@@ -133,9 +156,7 @@ function GoBackWithRefresh(event) {
 								 		echo "<input type='submit' value='Close Incident'>";
 								}
 							?>
-							<a href="javascript:void(0);" onclick="goBack()">
-							   
-							</a>
+
 							<a href="#" onclick="GoBackWithRefresh();return false;"> 
 								<input type="button" value="Back">
 							</a>
