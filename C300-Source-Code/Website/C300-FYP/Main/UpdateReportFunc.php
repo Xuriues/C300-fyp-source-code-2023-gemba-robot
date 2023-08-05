@@ -23,6 +23,8 @@ if (isset($_POST['foundReport'])) {
         echo "<script>alert('Please pick an option.'); window.location.href = 'SpecificReport.php?reportID=$id';</script>";
         exit();
     }
+    date_default_timezone_set('Asia/Singapore');
+    $todayDateAndTime = date('d/m/Y H:i:s');
 
     $updateData = [
         "Id"    => $foundReport['Id'],
@@ -33,7 +35,8 @@ if (isset($_POST['foundReport'])) {
         "Report_Status" =>  False,
         "urlImg" => $foundReport['urlImg'],
         "ReasonForClosure" =>  $reasonForClosure,
-        "AdditionalInfo" =>  $incidentNotes
+        "AdditionalInfo" =>  $incidentNotes,
+        "ClosureDateTime" => $todayDateAndTime
     ];
     $pathName = "Reports/" . $foundReport['Topic'];
 

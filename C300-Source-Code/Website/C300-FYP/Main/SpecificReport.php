@@ -103,7 +103,10 @@ function GoBackWithRefresh(event) {
 										echo "<div>"; 
 									 	echo "<label>Reason for closure: " . $foundReport["ReasonForClosure"] ."</label>";
 										echo "</div>";
-									
+
+										echo "<div>"; 
+									 	echo "<label>Date & Time of Closure: " . $foundReport["ClosureDateTime"] ."</label>";
+										echo "</div>";
 								}
 								else {
 									echo '

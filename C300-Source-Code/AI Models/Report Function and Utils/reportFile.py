@@ -69,7 +69,8 @@ def createReport(topic, description, urlName):
         "Report_Status": True,
         "urlImg": urlName,
         "ReasonForClosure": "",
-        "AdditionalInfo": ""
+        "AdditionalInfo": "",
+        "ClosureDateTime": ""
     }
 
     try:
