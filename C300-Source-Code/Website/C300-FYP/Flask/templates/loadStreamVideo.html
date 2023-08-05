@@ -1,0 +1,19 @@
+<script type="text/javascript">
+    function goBack() {
+    history.go(-1);
+}
+</script>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8  offset-lg-2">
+
+            <a href="javascript:void(0);" onclick="goBack()">
+                                <input type="button" value="Back">
+            </a>
+            <h3 class="mt-5">Live Streaming</h3>
+            <img src="{{ url_for(data) }}" width="70%" height="85%">
+        </div>
+    </div>
+</div>
+</body>
