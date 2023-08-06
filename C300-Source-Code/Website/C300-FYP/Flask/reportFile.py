@@ -1,4 +1,3 @@
-#This Task was done by Kezia Widjaja 
 import pyrebase
 from datetime import datetime
 import cloudinary.uploader
