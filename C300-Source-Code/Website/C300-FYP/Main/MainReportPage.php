@@ -1,7 +1,8 @@
 <?php
+// Include this 2 files to work with firebase.
 include("db/dbconfig.php");
 include("db/firebase.php");
-
+//Retrieves the DB URL specified in the db folder.
 $db = new firebaseRDB($dbURL);
 ?>
 

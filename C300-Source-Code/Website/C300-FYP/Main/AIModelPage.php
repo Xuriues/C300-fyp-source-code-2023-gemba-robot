@@ -1,4 +1,4 @@
-<!-- index.php -->
+<!-- Main page for the user to try out the AI models from the back end. Done by Kezia -->
 <!DOCTYPE html>
 <html>
 <head>

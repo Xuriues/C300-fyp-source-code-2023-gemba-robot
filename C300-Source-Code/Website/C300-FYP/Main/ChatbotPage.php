@@ -14,6 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["btnSubmit"])) {
     $responseMsg = $response['result'];
 }
 
+//Sends out the input to the flask server
 function sendDataToFlaskServer($inputText) {
     $data = array(
         'inputText' => $inputText,
@@ -47,7 +48,7 @@ function sendDataToFlaskServer($inputText) {
 <html>
 <head>
     <title>Chatbot</title>
-    <!-- Add CSS for the loading spinner -->
+    <!-- Spinning Loader CSS -->
     <style>
         .loader {
             border: 4px solid rgba(0, 0, 0, 0.3);
@@ -82,7 +83,7 @@ function sendDataToFlaskServer($inputText) {
                 <textarea placeholder=" What would you like to know?" name="textAreaChatbot"><?php echo $taValue; ?></textarea>
                 <div id="chatBtnContainer">
                     <button type="submit" name="btnClear">Clear</button>
-                    <button type="button" id="btnSpeech">Microphone</button> <!-- Microphone button -->
+                    <button type="button" id="btnSpeech">Microphone</button> 
                     <button type="submit" name="btnSubmit">Submit</button>
                 </div>
             </form>
@@ -109,8 +110,6 @@ function sendDataToFlaskServer($inputText) {
             </div>
         </div>
     </div>
-
-    <!-- Add JavaScript code to handle form submission and loading process -->
 <script src="chatbot.js"></script>
 </body>
 </html>

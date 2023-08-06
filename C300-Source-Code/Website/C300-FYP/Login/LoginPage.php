@@ -1,4 +1,5 @@
 <?php
+// Done by Kezia 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Check if the userName and password fields are set
     if (isset($_POST["userName"]) && isset($_POST["password"])) {

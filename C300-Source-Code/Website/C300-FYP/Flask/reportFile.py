@@ -1,8 +1,10 @@
+#This Task was done by Kezia Widjaja 
 import pyrebase
 from datetime import datetime
 import cloudinary.uploader
 import requests
 
+#Function of telegram notification to be sent out when a report is created.
 def teleNotification(message):
 
     apiToken = '6381126305:AAGAZ9TZIGWqfuht3uoZquRJk_QJUU7cYaE'
@@ -15,7 +17,7 @@ def teleNotification(message):
     except Exception as e:
         print(e)
 
-
+#Uploads the image file to Cloudinary, use_filename is true because we want it to use our naming convention and not the random filename that cloudinary will use.
 def uploadImage(filePath):
     cloudinary.config( 
       cloud_name = "djqp3t4az", 
@@ -25,8 +27,7 @@ def uploadImage(filePath):
     result = cloudinary.uploader.upload(filePath, use_filename=True, unique_filename=False)
     return result['secure_url']
 
-# 2nd Node Consist of ONLY: PPE MHE Boxes
-
+#Set up the connection string to firebase VIA pyrebase4
 def setupFireBase(): 
     firebaseConfig = {
       "apiKey": "AIzaSyBp35in9gzSvIvJ74xdoy1pZiFplPj9bHc",
@@ -40,11 +41,12 @@ def setupFireBase():
 
     return pyrebase.initialize_app(firebaseConfig)
 
-
+# Save the intilialization of the firebase to conn & retrieves the database from the dbURL and saves it in fireDatabase
 conn = setupFireBase()
 fireDatabase = conn.database()
 
-
+#Topic consist of MHE, PPE, Boxes
+#Returns the index of the specific child node, if can't find any returns 1 (which is the starting)
 def findIndex(topic): 
     starting_id = 1
     snapshot = fireDatabase.child("Reports").child(topic).get()
@@ -57,9 +59,14 @@ def findIndex(topic):
 
 
 def createReport(topic, description, urlName):
-    report_date = datetime.now().strftime("%d/%m/%Y")
+    #Easier to retrieve date and time individually in the Report Page of the website
+    report_date = datetime.now().strftime("%d/%m/%Y") 
     report_time = datetime.now().strftime("%H:%M:%S")
+    #Calls findIndex to setup the Unique ID for that report.
     UID = topic+str(findIndex(topic))
+    #Sets the data
+    #URL Name is the image URL from cloudinary
+    #Set the rest to empty as its only needed after we close an incident
     data = {
         "Id": UID,
         "Topic": topic,
@@ -67,12 +74,12 @@ def createReport(topic, description, urlName):
         "time": report_time,
         "Description": description,
         "Report_Status": True,
-        "urlImg": urlName,
-        "ReasonForClosure": "",
+        "urlImg": urlName, 
+        "ReasonForClosure": "", 
         "AdditionalInfo": "",
         "ClosureDateTime": ""
     }
-
+    #If sucessfully it'll send out a telegram notification & saves report in the firebase
     try:
         fireDatabase.child("Reports").child(topic).child(UID).set(data)
         teleNotification("Incident Report has been created please do check the website UID: " + UID + "\n\n" + urlName)

@@ -1,3 +1,4 @@
+#This file is used for all object being detected, does not take into account for user and MHE only.
 from ultralytics import YOLO
 import depthai as dai
 import cv2
@@ -10,22 +11,21 @@ import time
 import countItem
 import reportFile
 
-# Load YOLO model
-#model = YOLO("C:\\FYP\\runs\\train\\weights\\best.pt") #PPE Model
+model = YOLO("..\\MHE_Model\\train\\weights\\best.pt") #MHE Model
 
-model = YOLO("C:\\FYP\\runs\\segment\\train\\weights\\best.pt") #MHE Model
-
+# Calculate the midpoint between two points
 def midpoint(ptA, ptB):
-    # Calculate the midpoint between two points
     return ((ptA[0] + ptB[0]) * 0.5, (ptA[1] + ptB[1]) * 0.5)
 
+# Convert box coordinates to top-left and bottom-right points
 def box_to_points(box):
-    # Convert box coordinates to top-left and bottom-right points
+    
     x_min, y_min, x_max, y_max = box
     ptA = (x_min, y_min)  # Top-left corner
     ptB = (x_max, y_max)  # Bottom-right corner
     return ptA, ptB
 
+#Avg coordinates for axies position
 def avgCoordinateAxis(box): 
     x_min, y_min, x_max, y_max = box
     x_avg = x_min + x_max * 0.5
@@ -45,11 +45,6 @@ def calculate_distance(arr, frame):
     return math.sqrt(x_diff + y_diff + z_cm) / 1000 # Convert to M
 
 def calHumanDist_From_MHE(arr, frame, index):
-    # x_diff = abs((arr[1][0] - arr[0][0])**2)
-    # y_diff = abs((arr[1][1] - arr[0][1])**2)
-    
-    # z_cm = abs((arr[1][2] - arr[0][2])**2)
-    # return math.sqrt(x_diff + y_diff + z_cm) / 1000 # Convert to M
     indexOfMHE = 0
     for x in range(len(arr)):
         if x != index: 
@@ -122,10 +117,8 @@ def main():
     flag = False
     start_time = None
     detected_time = 0
-    timeout_duration = 5  # 5 seconds timeout
+    timeout_duration = 60  # save every 60s (1 min)
 
-    last_saved_time = time.time()
-    save_interval = 60  # Save an image every 1 minute
     
     # Create box annotator
     box_annotate = sv.BoxAnnotator(
@@ -158,7 +151,7 @@ def main():
             
             for detection in detections:
                 _, confidence, class_id, _ = detection # Unpack elements from the detection tuple
-                if confidence > 0.2:
+                if confidence > 0.2: 
                     ptA, ptB = box_to_points(detection[0]) # Retrieve the two points from the detected object
 
                     midX, midY = midpoint(ptA, ptB) # Calculate the mid axis of the object
@@ -184,23 +177,25 @@ def main():
 
                 if (distance < 3):
                     if not flag:
-                        print("In not flag")
+                        
                         flag = True
                         start_time = time.time()
 
                     detected_time = time.time() - start_time
-                    print("Detected Time: ", start_time)
+                    
                     if detected_time > timeout_duration:
                         print("Distance has been breach")
-                        index = countItem.count_items_in_folder("Breach_Images\\MHE")
-                        imgName = "MHE" + str(index+1) + ".jpg"
-                        cv2.imwrite("Breach_Images/MHE/"+ imgName, box_annotate.annotate(scene=frame, detections=detections, labels=labels))
+                        index = countItem.count_items_in_folder("Breach_Images\\MHE") #Retrieves the number of items in the folder to set the index of the next image being saved.
+                        imgName = "MHE" + str(index+1) + ".jpg" #Standard naming convention for the image. 
+                        cv2.imwrite("Breach_Images/MHE/"+ imgName, box_annotate.annotate(scene=frame, detections=detections, labels=labels)) #Save images in the breach folder
                         print("Image Saved.")
                         pathName = "Breach_Images/MHE/"+ imgName #Find Path of the image saved
                         urlName = reportFile.uploadImage(pathName) #Upload Image
                         print("Image Uploaded.")
-                        #createReport("Boxes|PPE|MHE", Description, urlName) 4 you it'll be only PPE or Boxes
-                        reportFile.createReport("MHE", "MHE has been breach with a distance of " + str(round(distance,3)) + "meters", urlName)
+                        
+
+                        reportFile.createReport("MHE", "MHE has been breach with a distance of " + str(round(distance,3)) + "meters", urlName) # Generate the report details from Kezia task. 
+
                         #Reset the flag and start_time
                         flag = False
                         start_time = None
@@ -224,17 +219,21 @@ def main():
 def plotLine(frame, arr, distCM):
     pt1 = midpoint(arr[0][0], arr[0][1])  # Midpoint of the first object
     pt2 = midpoint(arr[1][0], arr[1][1])  # Midpoint of the second object
-    pt1 = (int(pt1[0]), int(pt1[1]))  # Convert to integers
-    pt2 = (int(pt2[0]), int(pt2[1]))  # Convert to integers
-    frame = cv2.line(frame, pt1, pt2, (0, 0, 255), 2)  # Plot a red line between the two objects
 
-    # Calculate the midpoint of the line
+
+    pt1 = (int(pt1[0]), int(pt1[1])) 
+    pt2 = (int(pt2[0]), int(pt2[1]))  
+
+    #Plot line
+    frame = cv2.line(frame, pt1, pt2, (0, 0, 255), 2)  
+
+    # Calculate the midpoint of the line to add text
     mid_point = ((pt1[0] + pt2[0]) // 2, (pt1[1] + pt2[1]) // 2)
 
     # Add text on the line
-    text = str(distCM) + "M apart"  # Replace with your desired text
+    text = str(distCM) + "M apart" 
     text_size, _ = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, 1, 2)
-    text_org = (mid_point[0] - text_size[0] // 2, mid_point[1] + text_size[1] // 2 - 10)  # Adjusted text origin calculation
+    text_org = (mid_point[0] - text_size[0] // 2, mid_point[1] + text_size[1] // 2 - 10) 
     frame = cv2.putText(frame, text, text_org, cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0) , 2, cv2.LINE_AA)
 
     return frame

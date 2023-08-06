@@ -11,7 +11,6 @@ $data = json_decode($data, true);
 $foundReport = null;
 $errorMsg = "Report Details Of $reportID";
 foreach ($data as $topic => $reports) {
-
 		foreach ($reports as $report) {
 			if ($report['Id'] === $reportID) {
 				$foundReport = $report;
@@ -75,16 +74,13 @@ function returnURL(currURL) {
 
 }
 
-
 function GoBackWithRefresh(event) {
     if ('referrer' in document) {
         const referrerURL = document.referrer;
         if (referrerURL.includes('UpdateReportFunc.php')) {
             newURL = returnURL(window.location.href.toLowerCase())
             window.location = newURL;
-            // Handle the case when the referring page is 'UpdateReportFunc.php'
         } else {
-            // Handle the case when the referring page is not 'UpdateReportFunc.php'
              window.location = referrerURL;
         }
     } else {
@@ -94,7 +90,6 @@ function GoBackWithRefresh(event) {
 
 </script>
 <body class="mainPageContainer">
-
 	<?php include "navPartialView.php"; ?>
 		<div id="tableContainer">
 		<?php
@@ -104,7 +99,6 @@ function GoBackWithRefresh(event) {
 		<h1 style="margin-left:20px">Report Details</h1>
 		<form method="POST" action="UpdateReportFunc.php">
     <input type="hidden" name="foundReport" value="<?php echo htmlspecialchars(json_encode($foundReport)); ?>">
-
 				<div class="image-container">
 					<img src="<?php echo $urlImg; ?>" style="width: 500px; height: 500px;"> 
 					<div class="label-container">
@@ -145,7 +139,7 @@ function GoBackWithRefresh(event) {
 										    </select>
 										</div>';
 								}
-              ?>
+              			?>
 						<div>
 							<div><label>Additional Notes for closure:</label></div>
 							<textarea id="incidentTextArea" name="textAreaReport" <?php if (!$foundReport["Report_Status"]) { echo "disabled"; } ?>><?php if (!$foundReport["Report_Status"]) { echo $foundReport["AdditionalInfo"]; } ?></textarea>

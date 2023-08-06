@@ -1,4 +1,4 @@
-<!-- Inside updateReport.php -->
+<!-- Handles the closing of report made by user -->
 <?php
 include("db/dbconfig.php");
 include("db/firebase.php");

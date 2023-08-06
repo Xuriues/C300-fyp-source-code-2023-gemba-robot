@@ -10,9 +10,7 @@ import countItem
 import reportFile
 
 # Load YOLO model
-#model = YOLO("C:\\FYP\\runs\\train\\weights\\best.pt") #PPE Model
-
-model = YOLO("C:\\FYP\\runs\\segment\\train\\weights\\best.pt") #MHE Model
+model = YOLO("..\\MHE_Model\\train\\weights\\best.pt") #MHE Model
 
 def midpoint(ptA, ptB):
     # Calculate the midpoint between two points
@@ -121,10 +119,8 @@ def main():
     flag = False
     start_time = None
     detected_time = 0
-    timeout_duration = 5  # 5 seconds timeout
+    timeout_duration = 60  # seconds timeout
 
-    last_saved_time = time.time()
-    save_interval = 60  # Save an image every 1 minute
     
     # Create box annotator
     box_annotate = sv.BoxAnnotator(
@@ -211,7 +207,6 @@ def main():
                             pathName = "Breach_Images/MHE/"+ imgName #Find Path of the image saved
                             urlName = reportFile.uploadImage(pathName) #Upload Image
                             print("Image Uploaded.")
-                            #createReport("Boxes|PPE|MHE", Description, urlName) 4 you it'll be only PPE or Boxes
                             reportFile.createReport("MHE", "MHE has been breach with a distance of " + str(round(distance,3)) + "meters", urlName)
                             #Reset the flag and start_time
                             flag = False
@@ -222,12 +217,11 @@ def main():
                         start_time = None
 
 
-            # Annotate the frame with detections and labels
             frame = box_annotate.annotate(scene=frame, detections=detections, labels=labels)
 
-            # Display annotated frame
+            
             cv2.imshow("YoloV8", frame)
-            # Press Q to quit
+            
             if cv2.waitKey(1) == ord('q'):
                 break
 
@@ -236,17 +230,17 @@ def main():
 def plotLine(frame, arr, distCM):
     pt1 = midpoint(arr[0][0], arr[0][1])  # Midpoint of the first object
     pt2 = midpoint(arr[1][0], arr[1][1])  # Midpoint of the second object
-    pt1 = (int(pt1[0]), int(pt1[1]))  # Convert to integers
-    pt2 = (int(pt2[0]), int(pt2[1]))  # Convert to integers
-    frame = cv2.line(frame, pt1, pt2, (0, 0, 255), 2)  # Plot a red line between the two objects
+    pt1 = (int(pt1[0]), int(pt1[1]))  
+    pt2 = (int(pt2[0]), int(pt2[1]))  
+    frame = cv2.line(frame, pt1, pt2, (0, 0, 255), 2)  
 
     # Calculate the midpoint of the line
     mid_point = ((pt1[0] + pt2[0]) // 2, (pt1[1] + pt2[1]) // 2)
 
-    # Add text on the line
-    text = str(distCM) + "M apart"  # Replace with your desired text
+   
+    text = str(distCM) + "M apart"  
     text_size, _ = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, 1, 2)
-    text_org = (mid_point[0] - text_size[0] // 2, mid_point[1] + text_size[1] // 2 - 10)  # Adjusted text origin calculation
+    text_org = (mid_point[0] - text_size[0] // 2, mid_point[1] + text_size[1] // 2 - 10) 
     frame = cv2.putText(frame, text, text_org, cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0) , 2, cv2.LINE_AA)
 
     return frame

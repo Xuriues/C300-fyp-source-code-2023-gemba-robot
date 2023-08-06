@@ -1,3 +1,4 @@
+#Handling of backend from server Done by Shaun
 from flask import Flask, Response, render_template, request, redirect, jsonify
 from flask_cors import CORS
 from ultralytics import YOLO

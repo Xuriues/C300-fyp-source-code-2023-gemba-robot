@@ -1,4 +1,5 @@
-This Task was done by Kezia Widjaja 
+reportFile.py was done by Kezia
+countItem.py was done by Shaun
 
 Python Libraries Needed: 
 pip install pyrebase4==4.7.1

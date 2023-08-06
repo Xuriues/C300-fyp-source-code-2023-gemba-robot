@@ -1,4 +1,5 @@
 <?php
+//Navigation page for the user to view reports, chatbot, & the AI.
 $current_page = basename($_SERVER['PHP_SELF']);
 ?>
 <div id="partialContainer">

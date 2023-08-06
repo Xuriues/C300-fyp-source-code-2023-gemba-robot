@@ -1,9 +1,6 @@
 This Task was done by Go San Ni
 
-* = Latest Version at the time of writing this
-If there is no asterisk next to the version, it means the library version must be according to that version indicated. 
-If there is an asterisk latest version can suffice. 
-
+Latest version for each dependency will do
 
 Python Libraries needed: 
 DOLLY:
